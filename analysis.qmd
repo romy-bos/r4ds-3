@@ -38,7 +38,6 @@ state_change <- dbplyr_state |>
   pivot_wider(names_from = year, values_from = rla_score) |>
   filter(!is.na(`2015`), !is.na(`2023`)) |>
   transmute(stateabb, rla_change = `2023` - `2015`)
-state_change |> arrange(rla_change)
 ```
 
 ```{r}
@@ -120,24 +119,6 @@ table_counts <- tibble(
     dbplyr_codes |> summarise(rows = n()) |> collect() |> pull(rows)
   )
 )
-table_counts
-dbplyr_act |>
-  left_join(dbplyr_codes, by = "activity_code") |>
-  count(major_name, sort = TRUE) |>
-  collect()
-dbplyr_act |>
-  left_join(dbplyr_codes, by = "activity_code") |>
-  group_by(major_name) |>
-  summarise(average_duration_min = mean(duration_min, na.rm = TRUE)) |>
-  arrange(desc(average_duration_min)) |>
-  collect()
-dbplyr_resp |>
-  count(sex, employment_status) |>
-  collect()
-dbplyr_resp |>
-  count(year) |>
-  arrange(year) |>
-  collect()
 activity_totals <- dbplyr_act |>
   inner_join(
     dbplyr_resp |>
@@ -157,7 +138,6 @@ activity_avg <- activity_totals |>
   group_by(sex, major_name) |>
   summarise(mean_minutes = mean(minutes), .groups = "drop") |>
   arrange(sex, desc(mean_minutes))
-activity_avg
 ```
 
 ```{r}
@@ -182,7 +162,6 @@ hourly_avg <- dbplyr_act |>
   group_by(sex, hour, major_name) |>
   summarise(avg_min = mean(duration_min, na.rm = TRUE), .groups = "drop") |>
   collect()
-hourly_avg
 ```
 
 ```{r}
